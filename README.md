@@ -1,13 +1,39 @@
-# wiki
-企业级微服务架构，服务灵活扩展。
-### 介绍
-* 采用前后端分离的模式，微服务版本前端(基于 [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin));
-* 后端采用Spring Boot、Spring Cloud & Alibaba;
-* 注册中心+配置中心选型Nacos;
-* 权限认证使用spring security + Jwt token;
-* 使用RocketMQ做消息总线
-* 使用Redis缓存权证码、Token与权限
-* 使用Alibaba sentinel做流量哨兵,提供服务限流与熔断
+# CH-Cloud 企业级微服务架构平台
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-1.8+-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.6.x-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2021.0.1+-green.svg)](https://spring.io/projects/spring-cloud)
+
+## 📖 项目简介
+
+CH-Cloud是一个基于Spring Boot + Spring Cloud Alibaba构建的企业级微服务架构平台，采用前后端分离模式，为企业提供完整的微服务解决方案。平台集成了用户权限管理、单点登录、API网关、中间件管理等核心功能，支持高并发、高可用的分布式系统架构。
+
+### ✨ 核心特性
+
+- 🏗️ **微服务架构** - 基于Spring Cloud Alibaba生态，服务灵活扩展
+- 🔐 **统一认证** - 基于JWT的单点登录系统，支持多因子认证
+- 🛡️ **权限管理** - 完整的RBAC权限体系，支持多租户架构
+- 🚪 **智能网关** - 基于Spring Cloud Gateway的API网关，支持动态路由
+- 🔧 **中间件管理** - 统一的Kafka、RocketMQ、Nacos、Redis管理平台
+- 📊 **监控运维** - 集成Prometheus、Grafana监控体系
+- 🐳 **容器化部署** - 支持Docker、Kubernetes部署
+- 📚 **API文档** - 集成Swagger/OpenAPI文档
+
+### 🛠️ 技术栈
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Spring Boot | 2.6.x | 基础框架 |
+| Spring Cloud | 2021.0.1+ | 微服务框架 |
+| Spring Cloud Alibaba | 2021.0.1.0 | 阿里云组件 |
+| Nacos | 2.0+ | 注册中心/配置中心 |
+| Redis | 6.0+ | 缓存中间件 |
+| MySQL | 8.0+ | 主数据库 |
+| RocketMQ | 4.9+ | 消息队列 |
+| Kafka | 2.8+ | 消息队列 |
+| Sentinel | 1.8+ | 流量控制 |
+| MyBatis Plus | 3.5.x | ORM框架 |
 ### 软件架构
 <img src="https://gitee.com/ch-cloud/wiki/raw/master/images/ch-cloud.jpg" alt="软件架构"/>
 
@@ -24,88 +50,326 @@
 >熔断机制  
 因为采取了服务的分布，为了避免服务之间的调用“雪崩”，采用了Hystrix的作为熔断器，避免了服务之间的“雪崩”。
 
-### 微服务说明
+## 🏛️ 系统架构
 
-[ch-admin3](https://gitee.com/ch-cloud/ch-admin3)  
-说明：静态页面（基于Vue + element-ui） 
-~~~
-基本功能：
-——系统管理
-————用户管理
-————角色管理
-————权限管理
-————组织管理
-————职位管理
-————数据字据
-——日志管理
-————登录日志
-————操作日志
-扩展功能：
-——Canal管理
-————集群管理
-————服务管理
-————实例管理
-————告警管理
-——Kafka管理
-————群集管理
-————主题管理
-————消息搜索
-————RPC泛化调用
-~~~
-[ch-upms](https://gitee.com/ch-cloud/ch-upms)  
-说明：用户权限管理服务  
-提供用户、角色、权限、组织、职位、数据字典、日志等管理RestFul接口
+### 整体架构图
 
-[ch-sso](https://gitee.com/ch-cloud/ch-sso)  
-说明：用户登录认证服务  
-提供用户登录、用户信息、Token刷新、网关权限认证RestFul接口
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   前端应用      │    │   网关服务      │    │   认证服务      │
+│   (Vue.js)      │◄──►│   (Gateway)     │◄──►│   (SSO)         │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   UPMS服务      │
+                       │  (权限管理)     │
+                       └─────────────────┘
+                                │
+                ┌───────────────┼───────────────┐
+                ▼               ▼               ▼
+        ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+        │   MySQL     │ │    Redis    │ │  RocketMQ   │
+        │  (主数据库)  │ │   (缓存)    │ │  (消息队列)  │
+        └─────────────┘ └─────────────┘ └─────────────┘
+```
 
-[ch-gateway](https://gitee.com/ch-cloud/ch-gateway)  
-说明：网关服务  
-提供Token鉴权、路由、请求日志记录
+### 核心服务说明
 
-**由于资源不足，未能提供演示环境，请参考以下安装教程**
+#### 1. CH-Admin3 前端管理界面
+- **技术栈**: Vue.js 3.x + Element Plus
+- **功能**: 系统管理、日志管理、中间件管理
+- **特色**: 响应式设计、组件化开发
 
-### 安装教程
+#### 2. CH-SSO 单点登录服务
+- **技术栈**: Spring Boot + Spring Security + JWT
+- **功能**: 用户认证、令牌管理、多因子认证
+- **特色**: 支持图形验证码、滑动拼图、点选文字验证码
 
->基础服务
-1.  安装数据库Mysql
-2.  安装缓存Redis
-3.  安装Nacos
-4.  安装prometheus(监控中间件，非必要安装)
-5.  安装grafana(监控面板，非必要安装)  
->>开发一键部署  
-准备一台4核8G服务器  
-基于Docker安装开发环境  
-    - 复制docker/base目录到服务器
-    - 切换到该目录  
-    - 使用docker/base/docker-compose.yaml
-```shell script
+#### 3. CH-UPMS 用户权限管理服务
+- **技术栈**: Spring Boot + MyBatis Plus + ShardingSphere
+- **功能**: 用户管理、角色管理、权限管理、组织架构
+- **特色**: 多租户支持、项目权限管理、数据字典
+
+#### 4. CH-Gateway API网关服务
+- **技术栈**: Spring Cloud Gateway + Sentinel
+- **功能**: 路由转发、权限验证、流量控制、请求日志
+- **特色**: 动态路由、Cookie自动刷新、多层权限过滤
+
+#### 5. CH-DevOps 中间件管理平台
+- **技术栈**: Spring Boot + Spring Cloud
+- **功能**: Kafka管理、RocketMQ管理、Nacos管理、Redis管理
+- **特色**: 统一管理、实时监控、配置管理
+
+## 🚀 快速开始
+
+### 环境要求
+
+- **JDK**: 1.8+
+- **Maven**: 3.6+
+- **MySQL**: 8.0+
+- **Redis**: 6.0+
+- **Nacos**: 2.0+
+- **RocketMQ**: 4.9+ (可选)
+- **Docker**: 20.10+ (可选)
+
+### 安装部署
+
+#### 方式一：Docker一键部署（推荐）
+
+**基础服务部署**
+```bash
+# 1. 克隆项目
+git clone https://gitee.com/ch-cloud/ch-cloud.git
+cd ch-cloud
+
+# 2. 启动基础服务（MySQL、Redis、Nacos）
+cd docker/base
 docker-compose -f docker-compose.yml up -d
 ```
-启动完成拓扑图如下：
-<img src="https://gitee.com/ch-cloud/wiki/raw/master/images/tp1.png" alt="基础服务拓扑"/>
->中间服务
-1.  安装RocketMQ  
->>一键部署  
-    - 复制docker/RocketMQ到服务器  
-    - 切换到该目录  
-    - 使用docker/RocketMQ /docker-compose.yaml
-```shell script
+
+**中间件服务部署**
+```bash
+# 启动RocketMQ
+cd docker/RocketMQ
 docker-compose -f docker-compose.yml up -d
 ```
-启动完成拓扑图如下：
-<img src="https://gitee.com/ch-cloud/wiki/raw/master/images/tp2.png" alt="中间服务拓扑"/>
->应用服务
-1.  安装静态页面服务（[请点击打开ch-admin3](https://gitee.com/ch-cloud/ch-admin3)）
-2.  安装用户权限服务（[请点击打开ch-upms](https://gitee.com/ch-cloud/ch-upms)）
-3.  安装用户登录认证服务（[请点击打开ch-sso](https://gitee.com/ch-cloud/ch-sso)）
-4.  安装网关(鉴权、路由)服务（[请点击打开ch-gateway](https://gitee.com/ch-cloud/ch-gateway)）
->扩展服务(非必要安装，代码不开放)
-1.  Canal管理服务（[请点击打开canal-admin](https://gitee.com/ch-cloud/canal-admin)）
-2.  Kafka管理服务（[请点击打开ch-kafka](https://gitee.com/ch-cloud/ch-kafka)）
 
-### 使用说明
+**应用服务部署**
+```bash
+# 1. 启动SSO认证服务
+cd ch-sso
+mvn spring-boot:run -pl web
+
+# 2. 启动UPMS权限管理服务
+cd ch-upms
+mvn spring-boot:run -pl web
+
+# 3. 启动Gateway网关服务
+cd ch-gateway
+mvn spring-boot:run -pl web
+
+# 4. 启动DevOps中间件管理服务
+cd ch-devops
+mvn spring-boot:run -pl web
+```
+
+#### 方式二：手动部署
+
+**1. 数据库初始化**
+```sql
+-- 创建数据库
+CREATE DATABASE ch_devops CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE ch_upms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 执行各服务的SQL脚本
+-- SSO服务脚本
+source ch-sso/xxx/db/1.0.0/oauth_client_details.sql
+source ch-sso/xxx/db/2.0.0/01_bt_api_project.sql
+
+-- UPMS服务脚本
+source ch-upms/xxx/db/1.0.0/01_st_user.sql
+source ch-upms/xxx/db/1.0.0/02_st_role.sql
+```
+
+**2. 配置修改**
+- 修改各服务的数据库连接配置
+- 修改Redis连接配置
+- 修改Nacos配置中心地址
+
+**3. 启动服务**
+```bash
+# 按顺序启动服务
+# 1. SSO认证服务 (端口: 7000)
+# 2. UPMS权限服务 (端口: 7002)
+# 3. Gateway网关服务 (端口: 7001)
+# 4. DevOps中间件服务 (端口: 7003)
+```
+
+### 服务访问地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 前端管理界面 | http://localhost:3000 | Vue.js前端应用 |
+| SSO认证服务 | http://localhost:7000 | 单点登录服务 |
+| UPMS权限服务 | http://localhost:7002 | 用户权限管理 |
+| Gateway网关 | http://localhost:7001 | API网关服务 |
+| DevOps中间件 | http://localhost:7003 | 中间件管理平台 |
+| Nacos控制台 | http://localhost:8848 | 注册中心/配置中心 |
+
+### 默认账号
+
+- **管理员账号**: admin
+- **默认密码**: admin123
+
+## 📋 功能特性
+
+### 🔐 认证授权
+- **单点登录**: 基于JWT的统一身份认证
+- **多因子认证**: 支持用户名密码+验证码双重认证
+- **令牌管理**: 自动刷新、过期处理、安全注销
+- **权限控制**: 基于RBAC的精细化权限管理
+
+### 🏢 组织管理
+- **用户管理**: 用户增删改查、角色分配、状态管理
+- **角色管理**: 角色权限分配、角色类型管理
+- **组织架构**: 部门层级管理、职位管理
+- **多租户**: 支持多租户架构，数据隔离
+
+### 🚪 网关服务
+- **动态路由**: 基于Nacos的动态路由管理
+- **权限验证**: 多层权限过滤器链
+- **流量控制**: 基于Sentinel的限流熔断
+- **请求日志**: 完整的请求响应日志记录
+
+### 🔧 中间件管理
+- **Kafka管理**: 集群管理、主题管理、消息监控
+- **RocketMQ管理**: 集群管理、主题管理、消息发送
+- **Nacos管理**: 配置管理、服务发现、命名空间管理
+- **Redis管理**: 数据库管理、键值操作、集群监控
+
+## 📚 API文档
+
+各服务均提供完整的API文档：
+
+| 服务 | API文档地址 | 说明 |
+|------|-------------|------|
+| SSO认证服务 | http://localhost:7000/swagger-ui/index.html | 认证相关接口 |
+| UPMS权限服务 | http://localhost:7002/swagger-ui/index.html | 权限管理接口 |
+| Gateway网关 | http://localhost:7001/swagger-ui.html | 网关管理接口 |
+| DevOps中间件 | http://localhost:7003/swagger-ui.html | 中间件管理接口 |
+
+## 🐳 容器化部署
+
+### Docker Compose部署
+
+```yaml
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ch_devops
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+
+  nacos:
+    image: nacos/nacos-server:v2.0.3
+    environment:
+      MODE: standalone
+      MYSQL_SERVICE_HOST: mysql
+    ports:
+      - "8848:8848"
+    depends_on:
+      - mysql
+
+  ch-sso:
+    build: ./ch-sso
+    ports:
+      - "7000:7000"
+    depends_on:
+      - mysql
+      - redis
+      - nacos
+
+  ch-upms:
+    build: ./ch-upms
+    ports:
+      - "7002:7002"
+    depends_on:
+      - mysql
+      - redis
+      - nacos
+
+  ch-gateway:
+    build: ./ch-gateway
+    ports:
+      - "7001:7001"
+    depends_on:
+      - ch-sso
+      - ch-upms
+
+volumes:
+  mysql_data:
+```
+
+### Kubernetes部署
+
+```bash
+# 应用K8s配置
+kubectl apply -f k8s/
+
+# 查看部署状态
+kubectl get pods -l app=ch-cloud
+```
+
+## 🔍 监控运维
+
+### 健康检查
+
+各服务均提供健康检查端点：
+
+- **SSO服务**: http://localhost:7000/actuator/health
+- **UPMS服务**: http://localhost:7002/actuator/health
+- **Gateway服务**: http://localhost:7001/actuator/health
+- **DevOps服务**: http://localhost:7003/actuator/health
+
+### 监控指标
+
+- **JVM指标**: 内存使用、GC情况、线程状态
+- **业务指标**: API调用次数、错误率、响应时间
+- **中间件指标**: 连接数、消息积压、响应时间
+
+## 🤝 贡献指南
+
+我们欢迎所有形式的贡献！
+
+### 贡献步骤
+
+1. **Fork 本仓库**
+2. **创建特性分支** (`git checkout -b feature/AmazingFeature`)
+3. **提交更改** (`git commit -m 'Add some AmazingFeature'`)
+4. **推送分支** (`git push origin feature/AmazingFeature`)
+5. **创建 Pull Request**
+
+### 代码规范
+
+- 遵循阿里巴巴Java开发手册
+- 使用统一的代码格式化配置
+- 添加必要的注释和文档
+- 编写单元测试
+
+## 📄 许可证
+
+本项目采用 [Apache License 2.0](LICENSE) 开源协议。
+
+## 📞 联系我们
+
+- **项目地址**: https://gitee.com/ch-cloud/ch-cloud
+- **问题反馈**: https://gitee.com/ch-cloud/ch-cloud/issues
+- **QQ群**: 27754177
+
+## 🙏 致谢
+
+感谢以下开源项目的支持：
+
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [Spring Cloud Alibaba](https://github.com/alibaba/spring-cloud-alibaba)
+- [Nacos](https://nacos.io/)
+- [Redis](https://redis.io/)
+- [MyBatis Plus](https://baomidou.com/)
+
+---
+
+## 📱 使用说明
 <table>
     <tr>
         <td>登录</td>
@@ -149,5 +413,13 @@ docker-compose -f docker-compose.yml up -d
     </tr>
 </table>
 
-### QQ群：27754177
+---
+
+<div align="center">
+
+**如果这个项目对您有帮助，请给我们一个 ⭐️ Star**
+
+Made with ❤️ by CH-Cloud Team
+
+</div>
 
