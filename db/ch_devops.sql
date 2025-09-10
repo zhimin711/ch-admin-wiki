@@ -183,6 +183,7 @@ CREATE TABLE `bt_nacos_cluster` (
   `SORT` int NOT NULL DEFAULT '0' COMMENT '序号',
   `username` varchar(100) DEFAULT NULL COMMENT '用户名',
   `password` varchar(100) DEFAULT NULL COMMENT 'password',
+  `version` varchar(10) NOT NULL DEFAULT 'v1' COMMENT '版本',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UK_BT_NC_URL` (`URL`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='业务-nacos集群表';
