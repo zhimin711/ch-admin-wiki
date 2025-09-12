@@ -350,8 +350,8 @@ docker-compose -f docker-compose-microservices.yml logs -f ch-gateway
         <td>操作日志</td>
     </tr> 
     <tr>
-        <td><img src="./images/v2/login_log.png"/></td>
-        <td><img src="./images/v2/operate_log.png"/></td>
+        <td><img src="./images/v2/login-log.png"/></td>
+        <td><img src="./images/v2/operate-log.png"/></td>
     </tr>
 </table>
 
