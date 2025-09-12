@@ -1872,7 +1872,7 @@ CREATE TABLE `st_user` (
 
 LOCK TABLES `st_user` WRITE;
 /*!40000 ALTER TABLE `st_user` DISABLE KEYS */;
-INSERT INTO `st_user` VALUES (1,'10000','admin','$2a$10$qtu98dMdajRqbQULLjixpe7vK7c9r7Zmu84Gu7lcpD/H9X2/GUf1.','超级管理员','2017-02-24',1,'admin@ch.com',NULL,'0',NULL,'0','1',0,'2018-12-08 23:50:17','0:0:0:0:0:0:0:1',0,NULL,'2017-03-09 01:26:44',NULL,'2025-05-30 02:50:52','admin','1',7,'xxx公司',10,'',1,'CEO');
+INSERT INTO `st_user` VALUES (1,'10000','admin','$2a$10$t3hfEr5JWhTQNzgALKs.3O/O1bVpH9EsEGT44etOOkkezP2oYABeO','超级管理员','2017-02-24',1,'admin@ch.com',NULL,'0',NULL,'0','1',0,'2018-12-08 23:50:17','0:0:0:0:0:0:0:1',0,NULL,'2017-03-09 01:26:44',NULL,'2025-05-30 02:50:52','admin','1',7,'xxx公司',10,'',1,'CEO');
 /*!40000 ALTER TABLE `st_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
