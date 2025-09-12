@@ -252,77 +252,6 @@ docker-compose -f docker-compose-microservices.yml logs -f ch-gateway
 | Gateway网关 | http://localhost:7001/swagger-ui.html | 网关管理接口 |
 | DevOps中间件 | http://localhost:7003/swagger-ui.html | 中间件管理接口 |
 
-## 🐳 容器化部署
-
-### Docker Compose部署
-
-```yaml
-version: '3.8'
-services:
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: ch_devops
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-
-  redis:
-    image: redis:6.2-alpine
-    ports:
-      - "6379:6379"
-
-  nacos:
-    image: nacos/nacos-server:v2.0.3
-    environment:
-      MODE: standalone
-      MYSQL_SERVICE_HOST: mysql
-    ports:
-      - "8848:8848"
-    depends_on:
-      - mysql
-
-  ch-sso:
-    build: ./ch-sso
-    ports:
-      - "7000:7000"
-    depends_on:
-      - mysql
-      - redis
-      - nacos
-
-  ch-upms:
-    build: ./ch-upms
-    ports:
-      - "7002:7002"
-    depends_on:
-      - mysql
-      - redis
-      - nacos
-
-  ch-gateway:
-    build: ./ch-gateway
-    ports:
-      - "7001:7001"
-    depends_on:
-      - ch-sso
-      - ch-upms
-
-volumes:
-  mysql_data:
-```
-
-### Kubernetes部署
-
-```bash
-# 应用K8s配置
-kubectl apply -f k8s/
-
-# 查看部署状态
-kubectl get pods -l app=ch-cloud
-```
 
 ## 🔍 监控运维
 
@@ -389,8 +318,8 @@ kubectl get pods -l app=ch-cloud
         <td>首页</td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/login.png"/></td>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/home.png"/></td>
+        <td><img src="./images/v2/login.png"/></td>
+        <td><img src="./images/v2/home.png"/></td>
     </tr>
     <tr>
         <td>用户管理</td>
@@ -405,24 +334,24 @@ kubectl get pods -l app=ch-cloud
         <td>组织管理</td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/permission.png"/></td>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/dept.png"/></td>
+        <td><img src="./images/v2/permission-mgr.png"/></td>
+        <td><img src="./images/v2/dept-mgr.png"/></td>
     </tr>
     <tr>
         <td>职位管理</td>
         <td>数据字典</td>
     </tr>
 	<tr>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/post.png"/></td>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/dict.png"/></td>
+        <td><img src="./images/v2/position-mgr.png"/></td>
+        <td><img src="./images/v2/dict-mgr.png"/></td>
     </tr>	
     <tr>
         <td>登录日志</td>
         <td>操作日志</td>
     </tr> 
     <tr>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/login_logs.png"/></td>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/operate_logs.png"/></td>
+        <td><img src="./images/v2/login_log.png"/></td>
+        <td><img src="./images/v2/operate_log.png"/></td>
     </tr>
 </table>
 
