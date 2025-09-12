@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # SSO认证服务
   ch-sso:
-    image: chaohua2025/ch-sso:20250905014841
+    image: chaohua2025/ch-sso:2.1.0-SNAPSHOT
     container_name: ch-sso
     restart: always
     ports:
